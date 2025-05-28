@@ -1,0 +1,149 @@
+
+###################################################################
+# User Profile
+# User Profile for a particular user can be changed
+# by inserting a new row.
+
+mutation CreateUserProfile(
+  $createDeviceStamp: String!
+  $displayName: String!
+  $photoUrl: String
+) @auth(level: USER) {
+  userProfile_insert(
+    data: {
+      userId_expr: "auth.uid"
+      createDeviceStamp: $createDeviceStamp
+      displayName: $displayName
+      photoUrl: $photoUrl
+    }
+  )
+}
+
+
+###################################################################
+# User Demographic Profile
+# User Demographic Profile for a particular user can be changed
+# by inserting a new row.
+
+mutation CreateUserDemographicProfile(
+    $gender:   DemographicsGender_Key!
+    $generation: DemographicsGeneration_Key!
+    $region:   DemographicsRegion_Key!
+    $urbanicity: DemographicsUrbanicity_Key!
+    $political: DemographicsPolitical_Key!
+) @auth(level: USER) {
+  userDemographicProfile_insert(
+    data: {
+      userId_expr: "auth.uid"
+      gender: $gender
+      generation: $generation
+      region: $region
+      urbanicity: $urbanicity
+      political: $political
+    }
+  )
+}
+
+
+###################################################################
+# Cross-User Relationships
+# User Relationships can be changed by inserting a new row.
+
+mutation CreateUserAssociation(
+    $associateUserId: String!
+    $autoSharePrivateTopics: Boolean
+    $follow: Boolean
+    $block: Boolean
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+  userAssociation_insert(
+    data: {
+      userId_expr: "auth.uid"
+      associateUserId: $associateUserId
+      autoSharePrivateTopics: $autoSharePrivateTopics
+      follow: $follow
+      block: $block
+    }
+  )
+}
+
+
+###################################################################
+# User Messages and Comments 
+
+mutation CreatePublicComment(
+    $status: String!
+    $title: String!
+    $content: String!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    publicComment_insert(
+        data: {
+            createUserId_expr: "auth.uid"
+            status: $status
+            title: $title
+            content: $content
+        }
+    )
+}
+
+mutation CreatePublicCommentReference(
+    $publicCommentId: UUID!
+    $referenceId: UUID!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    publicCommentReference_insert(
+        data: {
+            publicCommentId: $publicCommentId
+            referenceId: $referenceId
+            createUserId_expr: "auth.uid"
+        }
+    )
+}
+
+mutation CreatePrivateMessage(
+    $toUserId: String!
+    $toUserDisplayName: String!
+    $status: String!
+    $title: String!
+    $content: String!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    privateMessage_insert(
+        data: {
+            fromUserId_expr: "auth.uid"
+            toUserId: $toUserId
+            status: $status
+            title: $title
+            content: $content
+        }
+    )
+}
+
+mutation CreatePrivateMessageReference(
+    $privateMessageId: UUID!
+    $referenceId: UUID!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    privateMessageReference_insert(
+        data: {
+            privateMessageId: $privateMessageId
+            referenceId: $referenceId
+            createUserId_expr: "auth.uid"
+        }
+    )
+}
+
+mutation UpdatePrivateMessage(
+    $id: UUID!
+    $updateUserId: String!
+    $status: String!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    privateMessage_update(id: $id
+        data: {
+            updateUserId_expr: "auth.uid"
+            status: $status
+        }
+    )
+}

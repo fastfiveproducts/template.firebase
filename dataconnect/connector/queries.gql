@@ -1,0 +1,311 @@
+
+###################################################################
+# User Profile
+# User Profile for a particular user can be changed
+# by inserting a new row.
+
+query GetMyUserProfile @auth(
+    level: USER
+) {
+    userProfiles(
+        where: { userId: { eq_expr: "auth.uid" } }
+        orderBy: { createTimestamp: DESC }
+        limit: 1
+    ) {
+        id
+        userId
+        createTimestamp
+        createDeviceStamp
+        displayName
+        photoUrl
+    }
+}
+
+query GetUserProfile(
+    $userId: String!
+) @auth(
+    level: USER_EMAIL_VERIFIED
+    insecureReason: "some user profile details are meant to be visible to all authenticated users"
+) {
+    userProfiles(
+        where: { userId: { eq: $userId } }
+        orderBy: { createTimestamp: DESC }
+        limit: 1
+    ) {
+        id
+        userId
+        displayName
+        photoUrl
+    }
+}
+
+
+###################################################################
+# User Demographic Profile
+# User Demographic Profile for a particular user can be changed
+# by inserting a new row.
+
+query GetMyUserDemographicProfile @auth(
+    level: USER
+) {
+    userDemographicProfiles(
+        where: { userId: { eq_expr: "auth.uid" } }
+        orderBy: { createTimestamp: DESC }
+        limit: 1
+    ) {
+        id
+        userId
+        createTimestamp
+        gender {
+            key
+            name
+            description
+            photoUrl
+        }
+        generation {
+            key
+            name
+            description
+            birthYearStart
+            birthYearEnd
+            photoUrl
+        }
+        region {
+            key
+            name
+            description
+            photoUrl
+        }
+        urbanicity {
+            key
+            name
+            description
+            photoUrl
+        }
+        political {
+            key
+            name
+            description
+            photoUrl
+        }
+    }
+}
+
+query ListDemographicsGender @auth(
+    level: USER
+    insecureReason: "demographics are meant to be visible to all authenticated users"
+) {
+    demographicsGenders(
+        orderBy: { key: ASC }
+    ) {
+        key
+        name
+        description
+        photoUrl
+    }
+}
+
+query ListDemographicsGeneration @auth(
+    level: USER
+    insecureReason: "demographics are meant to be visible to all authenticated users"
+) {
+    demographicsGenerations(
+        orderBy: { key: ASC }
+    ) {
+        key
+        name
+        description
+        birthYearStart
+        birthYearEnd
+        photoUrl
+    }
+}
+
+query ListDemographicsRegion @auth(
+    level: USER
+    insecureReason: "demographics are meant to be visible to all authenticated users"
+) {
+    demographicsRegions(
+        orderBy: { key: ASC }
+    ) {
+        key
+        name
+        description
+        photoUrl
+    }
+}
+
+query ListDemographicsUrbanicity @auth(
+    level: USER
+    insecureReason: "demographics are meant to be visible to all authenticated users"
+) {
+    demographicsUrbanicities(
+        orderBy: { key: ASC }
+    ) {
+        key
+        name
+        description
+        photoUrl
+    }
+}
+
+query ListDemographicsPolitical @auth(
+    level: USER
+    insecureReason: "demographics are meant to be visible to all authenticated users"
+) {
+    demographicsPoliticals(
+        orderBy: { key: ASC }
+    ) {
+        key
+        name
+        description
+        photoUrl
+    }
+}
+
+
+###################################################################
+# Cross-User Relationships
+# User Relationships can be changed by inserting a new row.
+
+query GetMyUserAssociations @auth(
+    level: USER_EMAIL_VERIFIED
+) {
+    userAssociations (
+        where: { userId: { eq_expr: "auth.uid" } }
+        orderBy: [
+            { associateUserId: ASC }
+            { createTimestamp: DESC }
+        ]
+    ){
+        id
+        userId
+        createTimestamp
+        associateUserId
+        autoSharePrivateTopics
+        follow
+        block
+    }
+}
+
+
+###################################################################
+# User Messages and Comments 
+
+query ListPublicComments(
+    $limit: Int!
+) @auth(
+    level: USER
+    insecureReason: "public comments are meant to be visible to all authenticated users"
+) {
+    publicComments(
+        orderBy: { createTimestamp: DESC }
+        limit: $limit
+    ) {
+        id
+        createTimestamp
+        createUserId
+        status
+        title
+        content
+    }
+}
+
+query GetPublicCommentReferences(
+    $commentId: UUID!
+    $limit: Int!
+) @auth(
+    level: USER
+    insecureReason: "public comments are meant to be visible to all authenticated users"
+) {
+    publicCommentReferences(
+        where: { publicCommentId: { eq: $commentId } }
+        orderBy: [
+            { publicComment: { createTimestamp: DESC } }
+            { createTimestamp: DESC }
+        ]
+        limit: $limit
+    ) {
+        publicCommentId
+        referenceId
+    }
+}
+
+query GetMyPrivateMessages(
+    $limit: Int!
+) @auth(
+    level: USER_EMAIL_VERIFIED
+) {
+    privateMessages(
+        where: {
+            _or: [
+                    { toUserId: { eq_expr: "auth.uid" } }
+                    { fromUserId: { eq_expr: "auth.uid" } }
+             ] }
+        orderBy: { createTimestamp: DESC }
+        limit: $limit
+    ) {
+        id
+        createTimestamp
+        fromUserId
+        toUserId
+        status
+        title
+        content
+    }
+}
+
+query GetMyPrivateMessageReferences(
+    $limit: Int!
+) @auth(
+    level: USER_EMAIL_VERIFIED
+) {
+  privateMessageReferences(
+    where: {
+        privateMessage: {
+            _or: [
+                    { toUserId: { eq_expr: "auth.uid" } }
+                    { fromUserId: { eq_expr: "auth.uid" } }
+                ] }
+        }
+        orderBy: [
+            { privateMessage: { createTimestamp: DESC } }
+            { createTimestamp: DESC }
+        ]
+        limit: $limit
+    ) {
+        privateMessage {
+            id
+        }
+        referenceId
+    }
+}
+
+query GetPrivateMessageReferences(
+    $messageId: UUID!
+    $limit: Int!
+) @auth(
+    level: USER_EMAIL_VERIFIED
+) {
+  privateMessageReferences(
+    where: {
+        privateMessage: {
+            _and: [
+                { id: { eq: $messageId } }
+                {
+                    _or: [
+                        { toUserId: { eq_expr: "auth.uid" } }
+                        { fromUserId: { eq_expr: "auth.uid" } }
+                    ]
+                }
+            ] }
+        }
+        orderBy: {createTimestamp: DESC}
+        limit: $limit
+    ) {
+        privateMessage {
+            id
+        }
+        referenceId
+    }
+}
