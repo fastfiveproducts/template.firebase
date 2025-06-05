@@ -64,7 +64,8 @@ type UserAssociation @table {
 type PublicComment @table {
     id: UUID! @default(expr: "uuidV4()")
     createUser: User!
-    toUserId: String      # when replying to a user; string allows for empty UUID 00000000-0000-0000-0000-000000000000
+    toUserId: String
+    toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
@@ -76,7 +77,8 @@ type PublicComment @table {
 type PrivateMessage @table {
     id: UUID! @default(expr: "uuidV4()")
     createUser: User!
-    toUser: User
+    toUserId: String
+    toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!

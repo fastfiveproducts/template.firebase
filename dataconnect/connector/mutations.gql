@@ -127,6 +127,7 @@ mutation CreateUserAssociation(
 
 mutation CreatePublicComment(
     $toUserId: String!
+    $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
     $title: String!
@@ -137,6 +138,7 @@ mutation CreatePublicComment(
         data: {
             createUserId_expr: "auth.uid"
             toUserId: $toUserId
+            toUserDisplayNameText: $toUserDisplayNameText
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
             title: $title
@@ -147,6 +149,7 @@ mutation CreatePublicComment(
 
 mutation CreatePrivateMessage(
     $toUserId: String!
+    $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
     $title: String!
@@ -157,6 +160,7 @@ mutation CreatePrivateMessage(
         data: {
             createUserId_expr: "auth.uid"
             toUserId: $toUserId
+            toUserDisplayNameText: $toUserDisplayNameText
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
             title: $title

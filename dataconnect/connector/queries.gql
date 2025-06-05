@@ -131,11 +131,8 @@ query ListPublicComments(
             displayNameText
             photoUrl
         }
-        # toUser {
-        #     id
-        #     displayNameText
-        #     photoUrl
-        # }
+        toUserId
+        toUserDisplayNameText
         title
         content
     }
@@ -144,7 +141,8 @@ query ListPublicComments(
 query GetMyPrivateMessages(
     $limit: Int!
 ) @auth(
-    level: USER_EMAIL_VERIFIED
+    level: USER
+    # level: USER_EMAIL_VERIFIED
 ) {
     privateMessages(
         where: {
@@ -162,11 +160,8 @@ query GetMyPrivateMessages(
             displayNameText
             photoUrl
         }
-        # toUser {
-        #     id
-        #     displayNameText
-        #     photoUrl
-        # }
+        toUserId
+        toUserDisplayNameText
         title
         content
     }
