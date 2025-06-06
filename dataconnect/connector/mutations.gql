@@ -1,31 +1,79 @@
 
 ###################################################################
-# User Profile
-# User Profile for a particular user can be changed
-# by inserting a new row.
+# User 
 
-mutation CreateUserProfile(
-  $createDeviceStamp: String!
-  $displayName: String!
-  $photoUrl: String
+mutation CreateUser(
+  $createDeviceIdentifierstamp: String!
+  $createDeviceTimestamp: String!
+  $displayNameText: String!
+  $photoUrl: String!
 ) @auth(level: USER) {
-  userProfile_insert(
+  userAccount_insert(
     data: {
-      userId_expr: "auth.uid"
-      createDeviceStamp: $createDeviceStamp
-      displayName: $displayName
-      photoUrl: $photoUrl
+        id_expr: "auth.uid"
+        createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+        createDeviceTimestamp: $createDeviceTimestamp
+        updateDeviceIdentifierstamp: ""
+        updateDeviceTimestamp: ""
+        displayNameText: $displayNameText
+        photoUrl: $photoUrl
     }
   )
+}
+
+mutation UpdateUser(
+  $updateDeviceIdentifierstamp: String!
+  $updateDeviceTimestamp: String!
+  $displayNameText: String!
+  $photoUrl: String!
+) @auth(level: USER) {
+  userAccount_update(id_expr: "auth.uid"
+    data: {
+        updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
+        updateDeviceTimestamp: $updateDeviceTimestamp
+        displayNameText: $displayNameText
+        photoUrl: $photoUrl
+    }
+  )
+}
+
+mutation CreateUserDisplayName(
+  $createDeviceIdentifierstamp: String!
+  $createDeviceTimestamp: String!
+  $displayNameText: String!
+) @auth(level: USER)
+  @transaction {
+
+    # Step 1: Count existing display names for this user
+    query
+    @check(expr: "response.query.userDisplayNames.size() < 6", message: "you already have 5 previous display names, please use an old name") {
+        userDisplayNames(
+            where: { createUser: { id: { eq: "auth.uid" } } }
+        ) {
+            text_count
+        }
+    }
+
+    # Step 2: Insert new display name
+    userDisplayName_insert(
+        data: {
+            text: $displayNameText
+            createUserId_expr: "auth.uid"
+            createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+            createDeviceTimestamp: $createDeviceTimestamp
+        }
+    )
 }
 
 
 ###################################################################
 # User Demographic Profile
-# User Demographic Profile for a particular user can be changed
+# A User Demographic Profile for a particular user can be changed
 # by inserting a new row.
 
 mutation CreateUserDemographicProfile(
+    $createDeviceIdentifierstamp: String!
+    $createDeviceTimestamp: String!
     $gender:   DemographicsGender_Key!
     $generation: DemographicsGeneration_Key!
     $region:   DemographicsRegion_Key!
@@ -34,12 +82,14 @@ mutation CreateUserDemographicProfile(
 ) @auth(level: USER) {
   userDemographicProfile_insert(
     data: {
-      userId_expr: "auth.uid"
-      gender: $gender
-      generation: $generation
-      region: $region
-      urbanicity: $urbanicity
-      political: $political
+        createUserId_expr: "auth.uid"
+        createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+        createDeviceTimestamp: $createDeviceTimestamp
+        gender: $gender
+        generation: $generation
+        region: $region
+        urbanicity: $urbanicity
+        political: $political
     }
   )
 }
@@ -51,28 +101,35 @@ mutation CreateUserDemographicProfile(
 
 mutation CreateUserAssociation(
     $associateUserId: String!
-    $autoSharePrivateTopics: Boolean
+    $createDeviceIdentifierstamp: String!
+    $createDeviceTimestamp: String!
     $follow: Boolean
     $block: Boolean
+    $autoSharePrivateContent: Boolean
 #) @auth(level: USER_EMAIL_VERIFIED) {
 ) @auth(level: USER) {
   userAssociation_insert(
     data: {
-      userId_expr: "auth.uid"
-      associateUserId: $associateUserId
-      autoSharePrivateTopics: $autoSharePrivateTopics
-      follow: $follow
-      block: $block
+        createUserId_expr: "auth.uid"
+        associateUserId: $associateUserId
+        createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+        createDeviceTimestamp: $createDeviceTimestamp
+        follow: $follow
+        block: $block
+        autoSharePrivateContent: $autoSharePrivateContent
     }
   )
 }
 
 
 ###################################################################
-# User Messages and Comments 
+# User Comments, User Messages
 
 mutation CreatePublicComment(
-    $status: String!
+    $toUserId: String!
+    $toUserDisplayNameText: String!
+    $createDeviceIdentifierstamp: String!
+    $createDeviceTimestamp: String!
     $title: String!
     $content: String!
 #) @auth(level: USER_EMAIL_VERIFIED) {
@@ -80,7 +137,32 @@ mutation CreatePublicComment(
     publicComment_insert(
         data: {
             createUserId_expr: "auth.uid"
-            status: $status
+            toUserId: $toUserId
+            toUserDisplayNameText: $toUserDisplayNameText
+            createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+            createDeviceTimestamp: $createDeviceTimestamp
+            title: $title
+            content: $content
+        }
+    )
+}
+
+mutation CreatePrivateMessage(
+    $toUserId: String!
+    $toUserDisplayNameText: String!
+    $createDeviceIdentifierstamp: String!
+    $createDeviceTimestamp: String!
+    $title: String!
+    $content: String!
+#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) {
+    privateMessage_insert(
+        data: {
+            createUserId_expr: "auth.uid"
+            toUserId: $toUserId
+            toUserDisplayNameText: $toUserDisplayNameText
+            createDeviceIdentifierstamp: $createDeviceIdentifierstamp
+            createDeviceTimestamp: $createDeviceTimestamp
             title: $title
             content: $content
         }
@@ -101,25 +183,6 @@ mutation CreatePublicCommentReference(
     )
 }
 
-mutation CreatePrivateMessage(
-    $toUserId: String!
-    $toUserDisplayName: String!
-    $status: String!
-    $title: String!
-    $content: String!
-#) @auth(level: USER_EMAIL_VERIFIED) {
-) @auth(level: USER) {
-    privateMessage_insert(
-        data: {
-            fromUserId_expr: "auth.uid"
-            toUserId: $toUserId
-            status: $status
-            title: $title
-            content: $content
-        }
-    )
-}
-
 mutation CreatePrivateMessageReference(
     $privateMessageId: UUID!
     $referenceId: UUID!
@@ -134,15 +197,15 @@ mutation CreatePrivateMessageReference(
     )
 }
 
-mutation UpdatePrivateMessage(
-    $id: UUID!
-    $updateUserId: String!
+mutation CreatePrivateMessageStatus(
+    $privateMessageId: UUID!
     $status: String!
 #) @auth(level: USER_EMAIL_VERIFIED) {
 ) @auth(level: USER) {
-    privateMessage_update(id: $id
+    privateMessageStatus_insert(
         data: {
-            updateUserId_expr: "auth.uid"
+            privateMessageId: $privateMessageId
+            createUserId_expr: "auth.uid"
             status: $status
         }
     )
