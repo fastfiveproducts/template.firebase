@@ -2,7 +2,7 @@
 ###################################################################
 # User 
 
-type User @table(key: ["id"]) {
+type UserAccount @table(key: ["id"]) {
     id: String! @default(expr: "auth.uid")
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
@@ -15,7 +15,7 @@ type User @table(key: ["id"]) {
 
 type UserDisplayName @table(key: ["text"]) {
     text: String! @unique
-    createUser: User!
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
@@ -29,7 +29,7 @@ type UserDisplayName @table(key: ["text"]) {
 
 type UserDemographicProfile @table {
     id: UUID! @default(expr: "uuidV4()")
-    createUser: User!
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
@@ -47,8 +47,9 @@ type UserDemographicProfile @table {
 
 type UserAssociation @table {
     id: UUID! @default(expr: "uuidV4()")
-    createUser: User!
-    associateUser: User!
+    createUser: UserAccount!
+    associateUserId: String! @index
+    associateUserDisplayNameText: String!
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
@@ -63,7 +64,7 @@ type UserAssociation @table {
 
 type PublicComment @table {
     id: UUID! @default(expr: "uuidV4()")
-    createUser: User!
+    createUser: UserAccount!
     toUserId: String
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
@@ -76,7 +77,7 @@ type PublicComment @table {
 
 type PrivateMessage @table {
     id: UUID! @default(expr: "uuidV4()")
-    createUser: User!
+    createUser: UserAccount!
     toUserId: String
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
@@ -107,7 +108,7 @@ type PrivateMessageReference @table(
 type PrivateMessageStatus @table {
     id: UUID! @default(expr: "uuidV4()")
     privateMessage: PrivateMessage!
-    createUser: User!
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
     status: String!     # expected values "draft", "sent", "read", "archived", "deleted"
 }

@@ -8,7 +8,7 @@ mutation CreateUser(
   $displayNameText: String!
   $photoUrl: String!
 ) @auth(level: USER) {
-  user_insert(
+  userAccount_insert(
     data: {
         id_expr: "auth.uid"
         createDeviceIdentifierstamp: $createDeviceIdentifierstamp
@@ -27,7 +27,7 @@ mutation UpdateUser(
   $displayNameText: String!
   $photoUrl: String!
 ) @auth(level: USER) {
-  user_update(id_expr: "auth.uid"
+  userAccount_update(id_expr: "auth.uid"
     data: {
         updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
         updateDeviceTimestamp: $updateDeviceTimestamp

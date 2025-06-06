@@ -5,7 +5,7 @@
 query GetMyUserProfile @auth(
     level: USER
 ) {
-    users(
+    userAccounts(
         where: { id: { eq_expr: "auth.uid" } }
         orderBy: { createTimestamp: DESC }
         limit: 1
@@ -22,7 +22,7 @@ query GetUserProfile(
     level: USER_EMAIL_VERIFIED
     insecureReason: "some user profile details are meant to be visible to all authenticated users"
 ) {
-    users(
+    userAccounts(
         where: { id: { eq: $userId } }
         orderBy: { createTimestamp: DESC }
         limit: 1
@@ -98,11 +98,8 @@ query GetMyUserAssociations @auth(
             { createTimestamp: DESC }
         ]
     ){
-        associateUser {
-            id
-            displayNameText
-            photoUrl
-        }
+        associateUserId
+        associateUserDisplayNameText
         createTimestamp
         follow
         block
