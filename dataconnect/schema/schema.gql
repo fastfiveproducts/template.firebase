@@ -1,34 +1,123 @@
 
 ###################################################################
-# User Profile
-# User Profile for a particular user can be changed
-# by inserting a new row.
+# User 
 
-type UserProfile @table {
-    id: UUID! @default(expr: "uuidV4()")
-    userId: String! @index
+type UserAccount @table(key: ["id"]) {
+    id: String! @default(expr: "auth.uid")
     createTimestamp: Timestamp! @default(expr: "request.time")
-    createDeviceStamp: String!
-    displayName: String!
-    photoUrl: String
+    createDeviceIdentifierstamp: String!
+    createDeviceTimestamp: String!
+    updateTimestamp: Timestamp
+    updateDeviceIdentifierstamp: String
+    updateDeviceTimestamp: String
+    displayNameText: String!
+    photoUrl: String!
+}
+
+type UserDisplayName @table(key: ["text"]) {
+    text: String!
+    createUser: UserAccount!
+    createTimestamp: Timestamp! @default(expr: "request.time")
+    setTimestamp: Timestamp
+    setDeviceIdentifierstamp: String
+    setDeviceTimestamp: String
 }
 
 
 ###################################################################
 # User Demographic Profile
-# User Demographic Profile for a particular user can be changed
+# A User Demographic Profile for a particular user can be changed
 # by inserting a new row.
 
 type UserDemographicProfile @table {
     id: UUID! @default(expr: "uuidV4()")
-    userId: String! @index
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
+    createDeviceIdentifierstamp: String!
+    createDeviceTimestamp: String!
     gender: DemographicsGender!
     generation: DemographicsGeneration!
     region: DemographicsRegion!
     urbanicity: DemographicsUrbanicity!
     political: DemographicsPolitical!
 }
+
+
+###################################################################
+# Cross-User Relationships
+# User Relationships can be changed by inserting a new row.
+
+type UserAssociation @table {
+    id: UUID! @default(expr: "uuidV4()")
+    createUser: UserAccount!
+    associateUserId: String! @index
+    associateUserDisplayNameText: String!
+    createTimestamp: Timestamp! @default(expr: "request.time")
+    createDeviceIdentifierstamp: String!
+    createDeviceTimestamp: String!
+    follow: Boolean! @default(value: false)
+    block: Boolean! @default(value: false)
+    autoSharePrivateContent: Boolean! @default(value: false)
+}
+
+
+###################################################################
+# User Comments, User Messages
+
+type PublicComment @table {
+    id: UUID! @default(expr: "uuidV4()")
+    createUser: UserAccount!
+    toUserId: String
+    toUserDisplayNameText: String
+    createTimestamp: Timestamp! @default(expr: "request.time")
+    createDeviceIdentifierstamp: String!
+    createDeviceTimestamp: String!
+    title: String!
+    content: String!
+}
+
+
+type PrivateMessage @table {
+    id: UUID! @default(expr: "uuidV4()")
+    createUser: UserAccount!
+    toUserId: String
+    toUserDisplayNameText: String
+    createTimestamp: Timestamp! @default(expr: "request.time")
+    createDeviceIdentifierstamp: String!
+    createDeviceTimestamp: String!
+    title: String!
+    content: String!
+}
+
+type PublicCommentReference @table(
+    key: ["publicComment", "referenceId"]
+) {
+    publicComment: PublicComment!
+    referenceId: UUID! @index
+    createUserId: String! @default(expr: "auth.uid")
+    createTimestamp: Timestamp! @default(expr: "request.time")
+}
+
+type PrivateMessageReference @table(
+    key: ["privateMessage", "referenceId"]
+) {
+    privateMessage: PrivateMessage!
+    referenceId: UUID! @index
+    createUserId: String! @default(expr: "auth.uid")
+    createTimestamp: Timestamp! @default(expr: "request.time")
+}
+
+type PrivateMessageStatus @table {
+    id: UUID! @default(expr: "uuidV4()")
+    privateMessage: PrivateMessage!
+    createUser: UserAccount!
+    createTimestamp: Timestamp! @default(expr: "request.time")
+    status: String!     # expected values "draft", "sent", "read", "archived", "deleted"
+}
+
+
+###################################################################
+# Demographic Values
 
 type DemographicsGender @table(
     key: ["key"]
@@ -75,60 +164,4 @@ type DemographicsPolitical @table(
     name: String!
     description: String!
     photoUrl: String
-}
-
-###################################################################
-# Cross-User Relationships
-# User Relationships can be changed by inserting a new row.
-
-type UserAssociation @table {
-    id: UUID! @default(expr: "uuidV4()")
-    userId: String! @index
-    createTimestamp: Timestamp! @default(expr: "request.time")
-    associateUserId: String! @index
-    autoSharePrivateTopics: Boolean
-    follow: Boolean
-    block: Boolean
-}
-
-
-###################################################################
-# User Messages and Comments 
-
-type PublicComment @table {
-    id: UUID! @default(expr: "uuidV4()")
-    createTimestamp: Timestamp! @default(expr: "request.time")
-    createUserId: String! @index
-    status: String!     # expected values "sent"
-    title: String!
-    content: String!
-}
-
-type PublicCommentReference @table(
-    key: ["publicComment", "referenceId"]
-) {
-    publicComment: PublicComment!
-    referenceId: UUID!
-    createTimestamp: Timestamp! @default(expr: "request.time")
-    createUserId: String! @index
-}
-
-type PrivateMessage @table {
-    id: UUID! @default(expr: "uuidV4()")
-    createTimestamp: Timestamp! @default(expr: "request.time")
-    fromUserId: String! @index
-    toUserId: String! @index
-    updateUserId: String!
-    status: String!     # expected values "sent", "read", "deleted"
-    title: String!
-    content: String!
-}
-
-type PrivateMessageReference @table(
-    key: ["privateMessage", "referenceId"]
-) {
-    privateMessage: PrivateMessage!
-    referenceId: UUID!
-    createTimestamp: Timestamp! @default(expr: "request.time")
-    createUserId: String! @index
 }
