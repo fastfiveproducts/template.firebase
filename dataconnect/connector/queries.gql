@@ -2,7 +2,7 @@
 ###################################################################
 # User 
 
-query GetMyUserProfile @auth(
+query GetMyUserAccount @auth(
     level: USER
 ) {
     userAccounts(
@@ -16,7 +16,20 @@ query GetMyUserProfile @auth(
     }
 }
 
-query GetUserProfile(
+query GetMyDisplayNames @auth(
+    level: USER
+) {
+    userDisplayNames(
+        where: { createUser: { id: { eq_expr: "auth.uid" } } }
+        orderBy: { setTimestamp: DESC }
+    ) {
+        text
+        createTimestamp
+        setTimestamp
+    }
+}
+
+query GetUserAccount(
     $userId: String!
 ) @auth(
     level: USER_EMAIL_VERIFIED

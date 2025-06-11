@@ -2,55 +2,26 @@
 ###################################################################
 # User 
 
-mutation CreateUser(
-  $createDeviceIdentifierstamp: String!
-  $createDeviceTimestamp: String!
-  $displayNameText: String!
-  $photoUrl: String!
-) @auth(level: USER) {
-  userAccount_insert(
-    data: {
-        id_expr: "auth.uid"
-        createDeviceIdentifierstamp: $createDeviceIdentifierstamp
-        createDeviceTimestamp: $createDeviceTimestamp
-        updateDeviceIdentifierstamp: ""
-        updateDeviceTimestamp: ""
-        displayNameText: $displayNameText
-        photoUrl: $photoUrl
-    }
-  )
-}
-
-mutation UpdateUser(
-  $updateDeviceIdentifierstamp: String!
-  $updateDeviceTimestamp: String!
-  $displayNameText: String!
-  $photoUrl: String!
-) @auth(level: USER) {
-  userAccount_update(id_expr: "auth.uid"
-    data: {
-        updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
-        updateDeviceTimestamp: $updateDeviceTimestamp
-        displayNameText: $displayNameText
-        photoUrl: $photoUrl
-    }
-  )
-}
-
 mutation CreateUserDisplayName(
-  $createDeviceIdentifierstamp: String!
-  $createDeviceTimestamp: String!
-  $displayNameText: String!
-) @auth(level: USER)
-  @transaction {
+    $displayNameText: String!
+) @auth(level: USER) @transaction {
 
-    # Step 1: Count existing display names for this user
+    # Step 1: Check if display name already exists
+    # an insert will also be prevented if the user is already hogging 5 displayNames
     query
-    @check(expr: "response.query.userDisplayNames.size() < 6", message: "you already have 5 previous display names, please use an old name") {
-        userDisplayNames(
+    @check( expr: "response.query.displayNamesForUser.size() < 6 && response.query.displayNamesMatchingText.size() == 0",
+            message: "That display name already exists, or you have already have too many display names.  Please choose another."
+    ) {
+        displayNamesForUser: userDisplayNames(
             where: { createUser: { id: { eq: "auth.uid" } } }
         ) {
-            text_count
+            text
+        }
+
+        displayNamesMatchingText: userDisplayNames(
+            where: { text: { eq: $displayNameText } }
+        ) {
+            text
         }
     }
 
@@ -59,8 +30,78 @@ mutation CreateUserDisplayName(
         data: {
             text: $displayNameText
             createUserId_expr: "auth.uid"
+        }
+    )
+}
+
+mutation CreateUserAccount(
+    $createDeviceIdentifierstamp: String!
+    $createDeviceTimestamp: String!
+    $displayNameText: String!
+    $photoUrl: String!
+) @auth(level: USER) {
+    userAccount_insert(
+        data: {
+            id_expr: "auth.uid"
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
+            displayNameText: $displayNameText
+            photoUrl: $photoUrl
+        }
+    )
+}
+
+mutation UpdateUserAccountDisplayName(
+    $updateDeviceIdentifierstamp: String!
+    $updateDeviceTimestamp: String! 
+    $displayNameText: String!
+) @auth(level: USER) @transaction {
+
+    # Step 1: make sure the user already 'owns' this Display Name
+    query @check(
+        expr: "response.query.name.createUser.id == auth.uid"
+        message: "You don’t own this display name. Please pick another."
+    ) {
+        name: userDisplayName(key: { text: $displayNameText }) {
+            text
+            createUser { id }
+        }
+    }
+
+    # Step 2: Update Display Name, to keep track of the set timestamp
+    userDisplayName_update(
+        key: { text: $displayNameText }
+        data: {
+            setTimestamp_expr: "request.time"
+            setDeviceIdentifierstamp: $updateDeviceIdentifierstamp
+            setDeviceTimestamp: $updateDeviceTimestamp
+        }   
+    )
+
+    # Step 3: Update User Account
+    userAccount_update(id_expr: "auth.uid",
+        data: {
+            updateTimestamp_expr: "request.time"
+            updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
+            updateDeviceTimestamp: $updateDeviceIdentifierstamp
+            displayNameText: $displayNameText
+        }
+    )
+}
+
+mutation UpdateUserAccountProfile(
+    $updateDeviceIdentifierstamp: String!
+    $updateDeviceTimestamp: String!
+    $photoUrl: String!
+    # add other fields as needed
+) @auth(level: USER) {
+    userAccount_update(id_expr: "auth.uid"
+        data: {
+            updateTimestamp_expr: "request.time"
+            updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
+            updateDeviceTimestamp: $updateDeviceTimestamp
+            photoUrl: $photoUrl
+            # add other fields as needed
         }
     )
 }
