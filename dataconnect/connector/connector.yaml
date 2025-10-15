@@ -1,5 +1,1 @@
-connectorId: default
-generate:
-  swiftSdk:
-    outputDir: ../../../template.ios.swiftdata/dataconnect-generated/swift
-    package: DefaultConnector
+connectorId: "default"

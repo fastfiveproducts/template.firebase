@@ -1,12 +1,13 @@
 specVersion: "v1"
-serviceId: "template-9960d-service"
+serviceId: "template-9960d-2-service"
 location: "us-central1"
 schema:
   source: "./schema"
   datasource:
     postgresql:
-      database: "template-9960d-database"
+      database: "template-9960d-2-database"
       cloudSql:
-        instanceId: "template-9960d-instance"
-      # schemaValidation: "COMPATIBLE"
+        instanceId: "template-9960d-2-instance"
+        # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
+        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
 connectorDirs: ["./connector"]

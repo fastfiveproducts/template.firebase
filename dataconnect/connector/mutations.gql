@@ -142,6 +142,7 @@ mutation CreateUserDemographicProfile(
 
 mutation CreateUserAssociation(
     $associateUserId: String!
+    $associateUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
     $follow: Boolean
@@ -153,6 +154,7 @@ mutation CreateUserAssociation(
     data: {
         createUserId_expr: "auth.uid"
         associateUserId: $associateUserId
+        associateUserDisplayNameText: $associateUserDisplayNameText
         createDeviceIdentifierstamp: $createDeviceIdentifierstamp
         createDeviceTimestamp: $createDeviceTimestamp
         follow: $follow
