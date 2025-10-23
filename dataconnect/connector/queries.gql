@@ -367,3 +367,21 @@ query ListDemographicsPolitical @auth(
         photoUrl
     }
 }
+
+
+###################################################################
+# HelpText
+query ListHelpText(
+    $limit: Int!
+) @auth(
+    level: PUBLIC
+    insecureReason: "help text is static, user-facing content"
+) {
+    helpTexts(
+        orderBy: { code: ASC }
+        limit: $limit
+    ) {
+        code
+        text
+    } 
+}
