@@ -1,6 +1,6 @@
 
 ###################################################################
-# User 
+# Current User 
 
 query GetMyUserAccount @auth(
     level: USER
@@ -26,23 +26,6 @@ query GetMyDisplayNames @auth(
         text
         createTimestamp
         setTimestamp
-    }
-}
-
-query GetUserAccount(
-    $userId: String!
-) @auth(
-    level: USER_EMAIL_VERIFIED
-    insecureReason: "some user profile details are meant to be visible to all authenticated users"
-) {
-    userAccounts(
-        where: { id: { eq: $userId } }
-        orderBy: { createTimestamp: DESC }
-        limit: 1
-    ) {
-        id
-        displayNameText
-        photoUrl
     }
 }
 
@@ -117,6 +100,46 @@ query GetMyUserAssociations @auth(
         follow
         block
         autoSharePrivateContent
+    }
+}
+
+
+###################################################################
+# General User 
+
+query GetUserAccount(
+    $userId: String!
+) @auth(
+    level: USER_EMAIL_VERIFIED
+    insecureReason: "some user profile details are meant to be visible to all authenticated users"
+) {
+    userAccounts(
+        where: { id: { eq: $userId } }
+        orderBy: { createTimestamp: DESC }
+        limit: 1
+    ) {
+        id
+        displayNameText
+        photoUrl
+    }
+}
+
+query UserDisplayNameSearch(
+    $searchText: String!
+    $limit: Int!
+) @auth(
+    level: USER
+    # level: USER_EMAIL_VERIFIED
+    insecureReason: "user search is needed for messaging functionality"
+) {
+    userAccounts(
+        where: { displayNameTextLower: { contains: $searchText } }
+        orderBy: { displayNameText: ASC }
+        limit: $limit
+    ) {
+        id
+        displayNameText
+        photoUrl
     }
 }
 
