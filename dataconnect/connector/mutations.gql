@@ -38,6 +38,7 @@ mutation CreateUserAccount(
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
     $displayNameText: String!
+    $displayNameTextLower: String!
     $photoUrl: String!
 ) @auth(level: USER) {
     userAccount_insert(
@@ -46,6 +47,7 @@ mutation CreateUserAccount(
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
             displayNameText: $displayNameText
+            displayNameTextLower: $displayNameTextLower
             photoUrl: $photoUrl
         }
     )
@@ -53,14 +55,15 @@ mutation CreateUserAccount(
 
 mutation UpdateUserAccountDisplayName(
     $updateDeviceIdentifierstamp: String!
-    $updateDeviceTimestamp: String! 
+    $updateDeviceTimestamp: String!
     $displayNameText: String!
+    $displayNameTextLower: String!
 ) @auth(level: USER) @transaction {
 
     # Step 1: make sure the user already 'owns' this Display Name
     query @check(
         expr: "response.query.name.createUser.id == auth.uid"
-        message: "You don’t own this display name. Please pick another."
+        message: "You don't own this display name. Please pick another."
     ) {
         name: userDisplayName(key: { text: $displayNameText }) {
             text
@@ -75,7 +78,7 @@ mutation UpdateUserAccountDisplayName(
             setTimestamp_expr: "request.time"
             setDeviceIdentifierstamp: $updateDeviceIdentifierstamp
             setDeviceTimestamp: $updateDeviceTimestamp
-        }   
+        }
     )
 
     # Step 3: Update User Account
@@ -85,6 +88,7 @@ mutation UpdateUserAccountDisplayName(
             updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
             updateDeviceTimestamp: $updateDeviceIdentifierstamp
             displayNameText: $displayNameText
+            displayNameTextLower: $displayNameTextLower
         }
     )
 }
