@@ -169,6 +169,15 @@ type DemographicsPolitical @table(
 
 
 ###################################################################
+# RestrictedWord
+type RestrictedWord @table(
+  key: ["word"]
+) {
+  word: String!
+}
+
+
+###################################################################
 # HelpText
 type HelpText @table(
   key: ["code"]
