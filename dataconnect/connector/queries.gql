@@ -393,6 +393,23 @@ query ListDemographicsPolitical @auth(
 
 
 ###################################################################
+# RestrictedWord
+query ListRestrictedWords(
+    $limit: Int!
+) @auth(
+    level: PUBLIC
+    insecureReason: "restricted words are static reference data used for input validation"
+) {
+    restrictedWords(
+        orderBy: { word: ASC }
+        limit: $limit
+    ) {
+        word
+    }
+}
+
+
+###################################################################
 # HelpText
 query ListHelpText(
     $limit: Int!
