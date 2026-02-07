@@ -188,17 +188,17 @@ type DemographicsPolitical @table(
 ###################################################################
 # RestrictedWord
 type RestrictedWord @table(
-  key: ["word"]
+    key: ["word"]
 ) {
-  word: String!
+    word: String!
 }
 
 
 ###################################################################
 # HelpText
 type HelpText @table(
-  key: ["code"]
+    key: ["code"]
 ) {
-  code: String!
-  text: String!
+    code: String!
+    text: String!
 }

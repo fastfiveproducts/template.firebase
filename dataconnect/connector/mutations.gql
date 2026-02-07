@@ -103,7 +103,7 @@ mutation UpdateUserAccountDisplayName(
         data: {
             updateTimestamp_expr: "request.time"
             updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
-            updateDeviceTimestamp: $updateDeviceIdentifierstamp
+            updateDeviceTimestamp: $updateDeviceTimestamp
             displayNameText: $displayNameText
             displayNameTextLower: $displayNameTextLower
         }
