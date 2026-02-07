@@ -2,6 +2,11 @@
 the FastFive Products LLC Firebase template Firebase implementation
 (https://github.com/fastfiveproducts/template.firebase)
 
+## License
+- Licensed under **AGPL-3.0 — with an author exception**
+- See [LICENSE](./LICENSE) and [LICENSE-EXCEPTIONS.md](./LICENSE-EXCEPTIONS.md) for full terms
+- For file-level authorship, licensing, and reuse details, see [CONTRIBUTING.md](./CONTRIBUTING.md)
+
 ##  Dependencies
 - install Visual Studio Code via your preferred method (e.g. Homebrew)
 - note that deploying changes, or even running locally, will require a google identity with access to the associated Firebase project (alternatively, you can create a new project)

@@ -1,6 +1,23 @@
+#
+#  mutations.gql
+#
+#  Created by Pete Maiser, Fast Five Products LLC.
+#      Template v0.2.x — Fast Five Products LLC's public AGPL template.
+#
+#  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
+#
+#  This file is part of a project licensed under the GNU Affero General Public License v3.0.
+#  See the LICENSE file at the root of this repository for full terms.
+#
+#  An exception applies: Fast Five Products LLC retains the right to use this code and
+#  derivative works in proprietary software without being subject to the AGPL terms.
+#  See LICENSE-EXCEPTIONS.md for details.
+#
+#  For licensing inquiries, contact: licenses@fastfiveproducts.llc
+#
 
 ###################################################################
-# User 
+# User
 
 mutation CreateUserDisplayName(
     $displayNameText: String!
@@ -38,6 +55,7 @@ mutation CreateUserAccount(
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
     $displayNameText: String!
+    $displayNameTextLower: String!
     $photoUrl: String!
 ) @auth(level: USER) {
     userAccount_insert(
@@ -46,6 +64,7 @@ mutation CreateUserAccount(
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
             displayNameText: $displayNameText
+            displayNameTextLower: $displayNameTextLower
             photoUrl: $photoUrl
         }
     )
@@ -53,14 +72,15 @@ mutation CreateUserAccount(
 
 mutation UpdateUserAccountDisplayName(
     $updateDeviceIdentifierstamp: String!
-    $updateDeviceTimestamp: String! 
+    $updateDeviceTimestamp: String!
     $displayNameText: String!
+    $displayNameTextLower: String!
 ) @auth(level: USER) @transaction {
 
     # Step 1: make sure the user already 'owns' this Display Name
     query @check(
         expr: "response.query.name.createUser.id == auth.uid"
-        message: "You don’t own this display name. Please pick another."
+        message: "You don't own this display name. Please pick another."
     ) {
         name: userDisplayName(key: { text: $displayNameText }) {
             text
@@ -75,7 +95,7 @@ mutation UpdateUserAccountDisplayName(
             setTimestamp_expr: "request.time"
             setDeviceIdentifierstamp: $updateDeviceIdentifierstamp
             setDeviceTimestamp: $updateDeviceTimestamp
-        }   
+        }
     )
 
     # Step 3: Update User Account
@@ -83,8 +103,9 @@ mutation UpdateUserAccountDisplayName(
         data: {
             updateTimestamp_expr: "request.time"
             updateDeviceIdentifierstamp: $updateDeviceIdentifierstamp
-            updateDeviceTimestamp: $updateDeviceIdentifierstamp
+            updateDeviceTimestamp: $updateDeviceTimestamp
             displayNameText: $displayNameText
+            displayNameTextLower: $displayNameTextLower
         }
     )
 }
@@ -148,8 +169,19 @@ mutation CreateUserAssociation(
     $follow: Boolean
     $block: Boolean
     $autoSharePrivateContent: Boolean
-#) @auth(level: USER_EMAIL_VERIFIED) {
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
+
+    # Prevent self-association and verify target user exists
+    query @check(
+        expr: "response.query.target.id != auth.uid"
+        message: "You cannot follow or block yourself."
+    ) {
+        target: userAccount(id: $associateUserId) { id }
+    }
+
   userAssociation_insert(
     data: {
         createUserId_expr: "auth.uid"
@@ -175,8 +207,10 @@ mutation CreatePublicComment(
     $createDeviceTimestamp: String!
     $title: String!
     $content: String!
-#) @auth(level: USER_EMAIL_VERIFIED) {
 ) @auth(level: USER) {
+#) @auth(level: USER_EMAIL_VERIFIED) {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
     publicComment_insert(
         data: {
             createUserId_expr: "auth.uid"
@@ -197,8 +231,10 @@ mutation CreatePrivateMessage(
     $createDeviceTimestamp: String!
     $title: String!
     $content: String!
-#) @auth(level: USER_EMAIL_VERIFIED) {
 ) @auth(level: USER) {
+#) @auth(level: USER_EMAIL_VERIFIED) {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
     privateMessage_insert(
         data: {
             createUserId_expr: "auth.uid"
@@ -215,8 +251,10 @@ mutation CreatePrivateMessage(
 mutation CreatePublicCommentReference(
     $publicCommentId: UUID!
     $referenceId: UUID!
-#) @auth(level: USER_EMAIL_VERIFIED) {
 ) @auth(level: USER) {
+#) @auth(level: USER_EMAIL_VERIFIED) {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
     publicCommentReference_insert(
         data: {
             publicCommentId: $publicCommentId
@@ -229,8 +267,22 @@ mutation CreatePublicCommentReference(
 mutation CreatePrivateMessageReference(
     $privateMessageId: UUID!
     $referenceId: UUID!
-#) @auth(level: USER_EMAIL_VERIFIED) {
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
+
+    # Verify the caller is the sender or recipient of the message
+    query @check(
+        expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
+        message: "You can only create references for messages you sent or received."
+    ) {
+        msg: privateMessage(id: $privateMessageId) {
+            createUserId
+            toUserId
+        }
+    }
+
     privateMessageReference_insert(
         data: {
             privateMessageId: $privateMessageId
@@ -243,8 +295,22 @@ mutation CreatePrivateMessageReference(
 mutation CreatePrivateMessageStatus(
     $privateMessageId: UUID!
     $status: String!
-#) @auth(level: USER_EMAIL_VERIFIED) {
-) @auth(level: USER) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
+
+    # Verify the caller is the sender or recipient of the message
+    query @check(
+        expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
+        message: "You can only set status on messages you sent or received."
+    ) {
+        msg: privateMessage(id: $privateMessageId) {
+            createUserId
+            toUserId
+        }
+    }
+
     privateMessageStatus_insert(
         data: {
             privateMessageId: $privateMessageId
