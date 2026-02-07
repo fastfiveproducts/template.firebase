@@ -169,10 +169,19 @@ mutation CreateUserAssociation(
     $follow: Boolean
     $block: Boolean
     $autoSharePrivateContent: Boolean
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
 # Production apps should usually use USER_EMAIL_VERIFIED to require
 # email verification before allowing this action.
+
+    # Prevent self-association and verify target user exists
+    query @check(
+        expr: "response.query.target.id != auth.uid"
+        message: "You cannot follow or block yourself."
+    ) {
+        target: userAccount(id: $associateUserId) { id }
+    }
+
   userAssociation_insert(
     data: {
         createUserId_expr: "auth.uid"
