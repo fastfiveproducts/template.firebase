@@ -326,7 +326,19 @@ query GetPrivateMessageStatus(
     insecureReason: "users need to see status of messages they received (created by others)"
 ) {
   privateMessageStatuses(
-    where: { privateMessage: { id: { eq: $messageId } } }
+    where: {
+        privateMessage: {
+            _and: [
+                { id: { eq: $messageId } }
+                {
+                    _or: [
+                        { createUserId: { eq_expr: "auth.uid" } }
+                        { toUserId: { eq_expr: "auth.uid" } }
+                    ]
+                }
+            ]
+        }
+    }
     orderBy: { createTimestamp: DESC }
     limit: $limit
     ) {

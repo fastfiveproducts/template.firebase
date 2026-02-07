@@ -258,10 +258,22 @@ mutation CreatePublicCommentReference(
 mutation CreatePrivateMessageReference(
     $privateMessageId: UUID!
     $referenceId: UUID!
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
 # Production apps should usually use USER_EMAIL_VERIFIED to require
 # email verification before allowing this action.
+
+    # Verify the caller is the sender or recipient of the message
+    query @check(
+        expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
+        message: "You can only create references for messages you sent or received."
+    ) {
+        msg: privateMessage(id: $privateMessageId) {
+            createUserId
+            toUserId
+        }
+    }
+
     privateMessageReference_insert(
         data: {
             privateMessageId: $privateMessageId
@@ -274,10 +286,22 @@ mutation CreatePrivateMessageReference(
 mutation CreatePrivateMessageStatus(
     $privateMessageId: UUID!
     $status: String!
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
+) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
 # Production apps should usually use USER_EMAIL_VERIFIED to require
 # email verification before allowing this action.
+
+    # Verify the caller is the sender or recipient of the message
+    query @check(
+        expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
+        message: "You can only set status on messages you sent or received."
+    ) {
+        msg: privateMessage(id: $privateMessageId) {
+            createUserId
+            toUserId
+        }
+    }
+
     privateMessageStatus_insert(
         data: {
             privateMessageId: $privateMessageId
