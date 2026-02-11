@@ -39,6 +39,7 @@ query GetMyDisplayNames @auth(
     userDisplayNames(
         where: { createUser: { id: { eq_expr: "auth.uid" } } }
         orderBy: { setTimestamp: DESC }
+        limit: 10
     ) {
         text
         createTimestamp
@@ -101,15 +102,18 @@ query GetMyUserDemographicProfile @auth(
 # Cross-User Relationships
 # User Relationships can be changed by inserting a new row.
 
-query GetMyUserAssociations @auth(
+query GetMyUserAssociations(
+    $limit: Int!
+) @auth(
     level: USER_EMAIL_VERIFIED
 ) {
     userAssociations (
         where: { createUserId: { eq_expr: "auth.uid" } }
         orderBy: [
-            { associateUserId: ASC }
             { createTimestamp: DESC }
+            { associateUserId: ASC }
         ]
+        limit: $limit
     ){
         associateUserId
         associateUserDisplayNameText
