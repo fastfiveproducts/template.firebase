@@ -1,6 +1,7 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this Firebase Data Connect project.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this project.
+It is part of Fast Five Products LLC's public AGPL template for Firebase development, version v0.2.7 (updated)
 
 
 ## Build Commands
@@ -62,15 +63,81 @@ Present findings as a numbered table with columns: ID, Category, Priority, Summa
 
 
 ## Testing
+
 - Manual testing only (no automated test suite)
+- Firebase provides a local emulator suite (`firebase emulators:start`) for testing Data Connect queries/mutations against a local PostgreSQL instance without affecting deployed environments. It should generally be used for validating schema migrations and query behavior before deploying.
 
 
-## Workflow
-1. Claude: modify schema, queries, or mutations in `dataconnect/`
-2. Claude: run `firebase dataconnect:sdk:generate` to check for errors
-3. Claude: fix errors and repeat
-4. Human:  reviews changes and deploys with CLI
-5. Git Workflow: Feature branches from `develop`, squash-merge to `develop`, then squash to `main` for releases
+## Workflow (develop)
+
+Work happens on feature branches off `develop`. Typical flow:
+
+> **Examples for User Initiate**: "Start work on issue 42", "Create a branch for issue #15"
+
+```bash
+# 1. Create a feature branch from a GitHub issue
+git fetch origin
+git checkout develop
+git pull origin develop
+gh issue develop <issue-number> --base develop --checkout
+```
+
+2. Claude: modify schema, queries, or mutations in `dataconnect/`
+3. Claude: run `firebase dataconnect:sdk:generate` to check for errors
+4. Claude: fix errors and repeat
+5. User:   reviews changes and tests with emulator
+6. User:   deploys with CLI
+7. User:   request commit and push
+9. Claude: commit and push the feature branch
+10. Claude: create a PR targeting `develop` via `gh pr create --base develop`
+11. User: reviews and squash-merges the PR in GitHub
+12. Claude: refresh develop locally:
+
+```bash
+git checkout develop
+git pull origin develop
+```
+
+**Code Review**:  User may ask for a Code Review leading to a feature-branch merge, or at any time
+**Local branches**: Don't delete local branches after merge — just leave them.
+
+
+## Release Process (develop to main)
+
+Each commit on `main` represents a published release. Squash all of develop into a single commit on main.
+
+> **Example for User to Initiate**: "Release develop to main as 0.2.7"
+
+```bash
+# 1. Ensure develop is current
+git checkout develop
+git pull origin develop
+
+# 2. Checkout main and pull
+git checkout main
+git pull origin main
+
+# 3. Squash merge develop into main
+git merge --squash develop
+git commit -m "Release vX.Y.Z – <summary>"
+git push origin main
+
+# 4. If step 3 fails with conflicts (common after file renames/moves):
+git reset --hard origin/main
+git read-tree --reset -u develop
+git commit -m "Release vX.Y.Z – <summary>"
+git push origin main
+
+# 5. Verify content equivalence (should return nothing):
+git diff main..develop
+```
+
+6. User verifies main with CLI and emulator and deploys as appropriate.
+
+
+**Commit message**: Review `git log main..develop --oneline` and prior release messages on main (`git log main --oneline`) to match the established style. Group changes into categories (e.g. **Feature Area**, **Code Quality**, **Infrastructure**) with concise bullet points summarizing each PR/commit. Also look for previous commit messages that duplicate or cancel each other out and squash them. The message should read as release notes — what changed and why, not individual commit details.
+
+After release, main and develop will have different commit hashes but identical content. GitHub may report main as "behind"/"ahead" of develop — this is expected and should be ignored.
 
 
 ## Common Issues
