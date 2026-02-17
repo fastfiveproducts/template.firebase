@@ -37,7 +37,7 @@ query GetMyDisplayNames @auth(
     level: USER
 ) {
     userDisplayNames(
-        where: { createUser: { id: { eq_expr: "auth.uid" } } }
+        where: { createUserId: { eq_expr: "auth.uid" } }
         orderBy: { setTimestamp: DESC }
         limit: 10
     ) {

@@ -66,6 +66,12 @@ node_modules/
 # dotenv environment variables file
 .env
 
-# dataconnect generated files
-.dataconnect
+# Data Connect local state and generated files
+.dataconnect/
 dataconnect-generated/
+
+# Claude Code session data and logs
+.claude/settings.local.json
+.claude/sessions/
+.claude/logs/
+.claude/tmp/

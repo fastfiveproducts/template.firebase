@@ -30,7 +30,7 @@ mutation CreateUserDisplayName(
             message: "That display name already exists, or you have already have too many display names.  Please choose another."
     ) {
         displayNamesForUser: userDisplayNames(
-            where: { createUser: { id: { eq: "auth.uid" } } }
+            where: { createUserId: { eq_expr: "auth.uid" } }
         ) {
             text
         }
@@ -76,6 +76,9 @@ mutation UpdateUserAccountDisplayName(
     $displayNameText: String!
     $displayNameTextLower: String!
 ) @auth(level: USER) @transaction {
+#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
 
     # Step 1: make sure the user already 'owns' this Display Name
     query @check(
@@ -116,6 +119,9 @@ mutation UpdateUserAccountProfile(
     $photoUrl: String!
     # add other fields as needed
 ) @auth(level: USER) {
+#) @auth(level: USER_EMAIL_VERIFIED) {
+# Production apps should usually use USER_EMAIL_VERIFIED to require
+# email verification before allowing this action.
     userAccount_update(id_expr: "auth.uid"
         data: {
             updateTimestamp_expr: "request.time"
@@ -136,22 +142,22 @@ mutation UpdateUserAccountProfile(
 mutation CreateUserDemographicProfile(
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
-    $gender:   DemographicsGender_Key!
-    $generation: DemographicsGeneration_Key!
-    $region:   DemographicsRegion_Key!
-    $urbanicity: DemographicsUrbanicity_Key!
-    $political: DemographicsPolitical_Key!
+    $genderKey: String!
+    $generationKey: String!
+    $regionKey: String!
+    $urbanicityKey: String!
+    $politicalKey: String!
 ) @auth(level: USER) {
   userDemographicProfile_insert(
     data: {
         createUserId_expr: "auth.uid"
         createDeviceIdentifierstamp: $createDeviceIdentifierstamp
         createDeviceTimestamp: $createDeviceTimestamp
-        gender: $gender
-        generation: $generation
-        region: $region
-        urbanicity: $urbanicity
-        political: $political
+        genderKey: $genderKey
+        generationKey: $generationKey
+        regionKey: $regionKey
+        urbanicityKey: $urbanicityKey
+        politicalKey: $politicalKey
     }
   )
 }
