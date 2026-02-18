@@ -202,3 +202,13 @@ type HelpText @table(
     code: String!
     text: String!
 }
+
+
+###################################################################
+# FeatureFlag
+type FeatureFlag @table(
+    key: ["code"]
+) {
+    code: String!
+    enabled: Boolean! @default(value: false)
+}
