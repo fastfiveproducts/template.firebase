@@ -173,8 +173,8 @@ query UserDisplayNameSearch(
 query ListPublicComments(
     $limit: Int!
 ) @auth(
-    level: USER
-    insecureReason: "public comments are meant to be visible to all authenticated users"
+    level: USER_ANON
+    insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
 ) {
     publicComments(
         orderBy: { createTimestamp: DESC }
@@ -434,8 +434,8 @@ query ListDemographicsPolitical @auth(
 query ListRestrictedWords(
     $limit: Int!
 ) @auth(
-    level: PUBLIC
-    insecureReason: "restricted words are static reference data used for input validation"
+    level: USER_ANON
+    insecureReason: "restricted words are reference data; any authenticated user (including anonymous) can read"
 ) {
     restrictedWords(
         orderBy: { word: ASC }
