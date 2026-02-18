@@ -112,7 +112,7 @@ type PublicCommentReference @table(
 ) {
     publicComment: PublicComment!
     referenceId: UUID! @index
-    createUserId: String! @default(expr: "auth.uid")
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
 }
 
@@ -121,7 +121,7 @@ type PrivateMessageReference @table(
 ) {
     privateMessage: PrivateMessage!
     referenceId: UUID! @index
-    createUserId: String! @default(expr: "auth.uid")
+    createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
 }
 
@@ -201,4 +201,14 @@ type HelpText @table(
 ) {
     code: String!
     text: String!
+}
+
+
+###################################################################
+# FeatureFlag
+type FeatureFlag @table(
+    key: ["code"]
+) {
+    code: String!
+    enabled: Boolean! @default(value: false)
 }

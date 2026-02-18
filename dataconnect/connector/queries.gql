@@ -460,5 +460,23 @@ query ListHelpText(
     ) {
         code
         text
-    } 
+    }
+}
+
+
+###################################################################
+# FeatureFlag
+query ListFeatureFlags(
+    $limit: Int!
+) @auth(
+    level: PUBLIC
+    insecureReason: "feature flags are static configuration data"
+) {
+    featureFlags(
+        orderBy: { code: ASC }
+        limit: $limit
+    ) {
+        code
+        enabled
+    }
 }
