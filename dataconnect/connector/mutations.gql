@@ -22,7 +22,6 @@
 mutation CreateUserDisplayName(
     $displayNameText: String!
 ) @auth(level: USER) @transaction {
-
     # Step 1: Check if display name already exists
     # an insert will also be prevented if the user is already hogging 5 displayNames
     query
@@ -76,10 +75,6 @@ mutation UpdateUserAccountDisplayName(
     $displayNameText: String!
     $displayNameTextLower: String!
 ) @auth(level: USER) @transaction {
-#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
-
     # Step 1: make sure the user already 'owns' this Display Name
     query @check(
         expr: "response.query.name.createUser.id == auth.uid"
@@ -118,10 +113,7 @@ mutation UpdateUserAccountProfile(
     $updateDeviceTimestamp: String!
     $photoUrl: String!
     # add other fields as needed
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     userAccount_update(id_expr: "auth.uid"
         data: {
             updateTimestamp_expr: "request.time"
@@ -175,11 +167,7 @@ mutation CreateUserAssociation(
     $follow: Boolean
     $block: Boolean
     $autoSharePrivateContent: Boolean
-) @auth(level: USER) @transaction {
-#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
-
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     # Prevent self-association and verify target user exists
     query @check(
         expr: "response.query.target.id != auth.uid"
@@ -213,10 +201,7 @@ mutation CreatePublicComment(
     $createDeviceTimestamp: String!
     $title: String!
     $content: String!
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     publicComment_insert(
         data: {
             createUserId_expr: "auth.uid"
@@ -237,10 +222,7 @@ mutation CreatePrivateMessage(
     $createDeviceTimestamp: String!
     $title: String!
     $content: String!
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     privateMessage_insert(
         data: {
             createUserId_expr: "auth.uid"
@@ -257,10 +239,7 @@ mutation CreatePrivateMessage(
 mutation CreatePublicCommentReference(
     $publicCommentId: UUID!
     $referenceId: UUID!
-) @auth(level: USER) {
-#) @auth(level: USER_EMAIL_VERIFIED) {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     publicCommentReference_insert(
         data: {
             publicCommentId: $publicCommentId
@@ -273,11 +252,7 @@ mutation CreatePublicCommentReference(
 mutation CreatePrivateMessageReference(
     $privateMessageId: UUID!
     $referenceId: UUID!
-) @auth(level: USER) @transaction {
-#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
-
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     # Verify the caller is the sender or recipient of the message
     query @check(
         expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
@@ -301,11 +276,7 @@ mutation CreatePrivateMessageReference(
 mutation CreatePrivateMessageStatus(
     $privateMessageId: UUID!
     $status: String!
-) @auth(level: USER) @transaction {
-#) @auth(level: USER_EMAIL_VERIFIED) @transaction {
-# Production apps should usually use USER_EMAIL_VERIFIED to require
-# email verification before allowing this action.
-
+) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     # Verify the caller is the sender or recipient of the message
     query @check(
         expr: "response.query.msg.createUserId == auth.uid || response.query.msg.toUserId == auth.uid"
