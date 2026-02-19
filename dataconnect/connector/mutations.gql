@@ -74,7 +74,7 @@ mutation UpdateUserAccountDisplayName(
     $updateDeviceTimestamp: String!
     $displayNameText: String!
     $displayNameTextLower: String!
-) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+) @auth(level: USER) @transaction {
     # Step 1: make sure the user already 'owns' this Display Name
     query @check(
         expr: "response.query.name.createUser.id == auth.uid"
