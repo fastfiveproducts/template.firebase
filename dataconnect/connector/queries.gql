@@ -168,12 +168,14 @@ query UserDisplayNameSearch(
 # User Comments, User Messages
 
 query ListPublicComments(
+    $appClientKey: String!
     $limit: Int!
 ) @auth(
     level: USER_ANON
     insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
 ) {
     publicComments(
+        where: { appClientKey: { eq: $appClientKey } }
         orderBy: { createTimestamp: DESC }
         limit: $limit
     ) {
@@ -192,16 +194,22 @@ query ListPublicComments(
 }
 
 query GetMyPrivateMessages(
+    $appClientKey: String!
     $limit: Int!
 ) @auth(
     level: USER_EMAIL_VERIFIED
 ) {
     privateMessages(
         where: {
-            _or: [
-                    { createUserId: { eq_expr: "auth.uid" } }
-                    { toUserId: { eq_expr: "auth.uid" } }
-             ] }
+            _and: [
+                { appClientKey: { eq: $appClientKey } }
+                {
+                    _or: [
+                        { createUserId: { eq_expr: "auth.uid" } }
+                        { toUserId: { eq_expr: "auth.uid" } }
+                    ]
+                }
+            ] }
         orderBy: { createTimestamp: DESC }
         limit: $limit
     ) {
@@ -461,12 +469,14 @@ query ListHelpText(
 ###################################################################
 # FeatureFlag
 query ListFeatureFlags(
+    $appClientKey: String!
     $limit: Int!
 ) @auth(
     level: PUBLIC
     insecureReason: "feature flags are static configuration data"
 ) {
     featureFlags(
+        where: { appClientKey: { eq: $appClientKey } }
         orderBy: { code: ASC }
         limit: $limit
     ) {
