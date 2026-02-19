@@ -1,5 +1,5 @@
 # template
-the FastFive Products LLC Firebase template Firebase implementation
+the FastFive Products LLC Firebase template implementation
 (https://github.com/fastfiveproducts/template.firebase)
 
 > **Branches:** [`main`](https://github.com/fastfiveproducts/template.firebase/tree/main) contains the latest stable release.
@@ -24,8 +24,8 @@ the FastFive Products LLC Firebase template Firebase implementation
 - setup development environment per https://firebase.google.com/docs/data-connect/quickstart
 - in VS Code, click the Firebase Data Connect icon on the left navigation bar to open the Firebase Data Connect studio
 - click "Sign in with Google"; typically you would use your organization google identity with access to the associated Firebase project 
-- click "Run firebase init"; if you signed-in with your organization google identity you would likley "Use an Existing Project" and select the template project (alternatively, you can create a new project)
-- if you intend to run the coresponding iOS app (https://github.com/fastfiveproducts/template.ios):
+- click "Run firebase init"; if you signed-in with your organization google identity you would likely "Use an Existing Project" and select the template project (alternatively, you can create a new project)
+- if you intend to run the corresponding iOS app (https://github.com/fastfiveproducts/template.ios):
   - clone that if you haven't already
   - in VS Code click "Add SDK to app" from the Firebase Data Connect studio; it should add the SDK to a parallel "dataconnect-generated" directory
 
