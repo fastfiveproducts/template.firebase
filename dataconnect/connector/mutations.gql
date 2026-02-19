@@ -195,6 +195,7 @@ mutation CreateUserAssociation(
 # User Comments, User Messages
 
 mutation CreatePublicComment(
+    $appClientKey: String!
     $toUserId: String!
     $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
@@ -204,6 +205,7 @@ mutation CreatePublicComment(
 ) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     publicComment_insert(
         data: {
+            appClientKey: $appClientKey
             createUserId_expr: "auth.uid"
             toUserId: $toUserId
             toUserDisplayNameText: $toUserDisplayNameText
@@ -216,6 +218,7 @@ mutation CreatePublicComment(
 }
 
 mutation CreatePrivateMessage(
+    $appClientKey: String!
     $toUserId: String!
     $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
@@ -225,6 +228,7 @@ mutation CreatePrivateMessage(
 ) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     privateMessage_insert(
         data: {
+            appClientKey: $appClientKey
             createUserId_expr: "auth.uid"
             toUserId: $toUserId
             toUserDisplayNameText: $toUserDisplayNameText
