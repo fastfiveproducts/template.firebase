@@ -2,6 +2,10 @@
 the FastFive Products LLC Firebase template Firebase implementation
 (https://github.com/fastfiveproducts/template.firebase)
 
+> **Branches:** [`main`](https://github.com/fastfiveproducts/template.firebase/tree/main) contains the latest stable release.
+> [`develop`](https://github.com/fastfiveproducts/template.firebase/tree/develop) is the working branch.
+> GitHub may show these branches as "behind" or "ahead" of each other — this is expected due to the squash-merge release process described [below](#branch-structure--change-approach).
+
 ## License
 - Licensed under **AGPL-3.0 — with an author exception**
 - See [LICENSE](./LICENSE) and [LICENSE-EXCEPTIONS.md](./LICENSE-EXCEPTIONS.md) for full terms

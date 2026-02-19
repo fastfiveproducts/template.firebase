@@ -149,10 +149,7 @@ query UserDisplayNameSearch(
     $searchText: String!
     $limit: Int!
 ) @auth(
-    level: USER
-    # level: USER_EMAIL_VERIFIED
-    # Production apps should usually use USER_EMAIL_VERIFIED to require
-    # email verification before allowing this action.
+    level: USER_EMAIL_VERIFIED
     insecureReason: "user search is needed for messaging functionality"
 ) {
     userAccounts(
@@ -173,8 +170,8 @@ query UserDisplayNameSearch(
 query ListPublicComments(
     $limit: Int!
 ) @auth(
-    level: USER
-    insecureReason: "public comments are meant to be visible to all authenticated users"
+    level: USER_ANON
+    insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
 ) {
     publicComments(
         orderBy: { createTimestamp: DESC }
@@ -197,10 +194,7 @@ query ListPublicComments(
 query GetMyPrivateMessages(
     $limit: Int!
 ) @auth(
-    level: USER
-    # level: USER_EMAIL_VERIFIED
-    # Production apps should usually use USER_EMAIL_VERIFIED to require
-    # email verification before allowing this action.
+    level: USER_EMAIL_VERIFIED
 ) {
     privateMessages(
         where: {
@@ -229,8 +223,8 @@ query GetPublicCommentReferences(
     $commentId: UUID!
     $limit: Int!
 ) @auth(
-    level: USER
-    insecureReason: "public comments are meant to be visible to all authenticated users"
+    level: USER_ANON
+    insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
 ) {
     publicCommentReferences(
         where: { publicCommentId: { eq: $commentId } }
@@ -434,8 +428,8 @@ query ListDemographicsPolitical @auth(
 query ListRestrictedWords(
     $limit: Int!
 ) @auth(
-    level: PUBLIC
-    insecureReason: "restricted words are static reference data used for input validation"
+    level: USER_ANON
+    insecureReason: "restricted words are reference data; any authenticated user (including anonymous) can read"
 ) {
     restrictedWords(
         orderBy: { word: ASC }
