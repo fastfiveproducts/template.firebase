@@ -149,10 +149,7 @@ query UserDisplayNameSearch(
     $searchText: String!
     $limit: Int!
 ) @auth(
-    level: USER
-    # level: USER_EMAIL_VERIFIED
-    # Production apps should usually use USER_EMAIL_VERIFIED to require
-    # email verification before allowing this action.
+    level: USER_EMAIL_VERIFIED
     insecureReason: "user search is needed for messaging functionality"
 ) {
     userAccounts(
@@ -197,10 +194,7 @@ query ListPublicComments(
 query GetMyPrivateMessages(
     $limit: Int!
 ) @auth(
-    level: USER
-    # level: USER_EMAIL_VERIFIED
-    # Production apps should usually use USER_EMAIL_VERIFIED to require
-    # email verification before allowing this action.
+    level: USER_EMAIL_VERIFIED
 ) {
     privateMessages(
         where: {
@@ -229,8 +223,8 @@ query GetPublicCommentReferences(
     $commentId: UUID!
     $limit: Int!
 ) @auth(
-    level: USER
-    insecureReason: "public comments are meant to be visible to all authenticated users"
+    level: USER_ANON
+    insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
 ) {
     publicCommentReferences(
         where: { publicCommentId: { eq: $commentId } }
