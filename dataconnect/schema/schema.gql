@@ -142,7 +142,7 @@ type PrivateMessageStatus @table {
 type DemographicsGender @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -151,7 +151,7 @@ type DemographicsGender @table(
 type DemographicsGeneration @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     birthYearStart: Int!
@@ -162,7 +162,7 @@ type DemographicsGeneration @table(
 type DemographicsRegion @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -171,7 +171,7 @@ type DemographicsRegion @table(
 type DemographicsUrbanicity @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -180,7 +180,7 @@ type DemographicsUrbanicity @table(
 type DemographicsPolitical @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
