@@ -84,6 +84,7 @@ type UserAssociation @table {
 
 type PublicComment @table {
     id: UUID! @default(expr: "uuidV4()")
+    appClient: AppClient!
     createUser: UserAccount!
     toUserId: String
     toUserDisplayNameText: String
@@ -97,6 +98,7 @@ type PublicComment @table {
 
 type PrivateMessage @table {
     id: UUID! @default(expr: "uuidV4()")
+    appClient: AppClient!
     createUser: UserAccount!
     toUserId: String
     toUserDisplayNameText: String
@@ -205,10 +207,21 @@ type HelpText @table(
 
 
 ###################################################################
+# AppClient
+type AppClient @table(
+    key: ["key"]
+) {
+    key: String! @unique
+    name: String!
+}
+
+
+###################################################################
 # FeatureFlag
 type FeatureFlag @table(
-    key: ["code"]
+    key: ["code", "appClient"]
 ) {
     code: String!
+    appClient: AppClient!
     enabled: Boolean! @default(value: false)
 }
