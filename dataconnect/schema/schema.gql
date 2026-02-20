@@ -36,7 +36,7 @@ type UserDisplayName @table(key: ["text"]) {
     text: String!
     createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
-    setTimestamp: Timestamp
+    setTimestamp: Timestamp @default(expr: "request.time")
     setDeviceIdentifierstamp: String
     setDeviceTimestamp: String
 }
@@ -86,7 +86,7 @@ type PublicComment @table {
     id: UUID! @default(expr: "uuidV4()")
     appClient: AppClient!
     createUser: UserAccount!
-    toUserId: String
+    toUserId: String @index
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
@@ -100,7 +100,7 @@ type PrivateMessage @table {
     id: UUID! @default(expr: "uuidV4()")
     appClient: AppClient!
     createUser: UserAccount!
-    toUserId: String
+    toUserId: String @index
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
@@ -142,7 +142,7 @@ type PrivateMessageStatus @table {
 type DemographicsGender @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -151,7 +151,7 @@ type DemographicsGender @table(
 type DemographicsGeneration @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     birthYearStart: Int!
@@ -162,7 +162,7 @@ type DemographicsGeneration @table(
 type DemographicsRegion @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -171,7 +171,7 @@ type DemographicsRegion @table(
 type DemographicsUrbanicity @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
@@ -180,7 +180,7 @@ type DemographicsUrbanicity @table(
 type DemographicsPolitical @table(
     key: ["key"]
 ) {
-    key: String! @unique
+    key: String!
     name: String!
     description: String!
     photoUrl: String
