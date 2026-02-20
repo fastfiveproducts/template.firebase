@@ -8,7 +8,10 @@ schema:
       database: "template-9960d-2-database"
       cloudSql:
         instanceId: "template-9960d-2-instance"
-        # schemaValidation: "STRICT"     # STRICT mode makes Postgres schema match Data Connect exactly.
-        # schemaValidation: "COMPATIBLE" # COMPATIBLE mode makes Postgres schema compatible with Data Connect.
+
+        # if a schemaValidation mode isn't specified, it is the default, which seems to more-or-less match "COMPATIBLE" behavior.
+        # schemaValidation: "COMPATIBLE" # Postgres can be a superset — extra columns/tables are OK, but everything Data Connect needs must be present.
+        schemaValidation: "STRICT"  # Postgres must match Data Connect exactly — flags extra columns, tables, or indexes not in schema.gql.
+
 connectorDirs: ["./connector"]
 
