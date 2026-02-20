@@ -36,7 +36,7 @@ type UserDisplayName @table(key: ["text"]) {
     text: String!
     createUser: UserAccount!
     createTimestamp: Timestamp! @default(expr: "request.time")
-    setTimestamp: Timestamp
+    setTimestamp: Timestamp @default(expr: "request.time")
     setDeviceIdentifierstamp: String
     setDeviceTimestamp: String
 }
