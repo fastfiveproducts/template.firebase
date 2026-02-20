@@ -168,10 +168,11 @@ mutation CreateUserAssociation(
     $block: Boolean
     $autoSharePrivateContent: Boolean
 ) @auth(level: USER_EMAIL_VERIFIED) @transaction {
-    # Prevent self-association and verify target user exists
+
+    # Verify target user exists and prevent self-association
     query @check(
-        expr: "response.query.target.id != auth.uid"
-        message: "You cannot follow or block yourself."
+        expr: "response.query.target != null && response.query.target.id != auth.uid"
+        message: "Target user not found, or you are trying to follow or block yourself."
     ) {
         target: userAccount(id: $associateUserId) { id }
     }

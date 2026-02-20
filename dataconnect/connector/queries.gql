@@ -364,6 +364,7 @@ query ListDemographicsGender @auth(
 ) {
     demographicsGenders(
         orderBy: { key: ASC }
+        limit: 100
     ) {
         key
         name
@@ -378,6 +379,7 @@ query ListDemographicsGeneration @auth(
 ) {
     demographicsGenerations(
         orderBy: { key: ASC }
+        limit: 100
     ) {
         key
         name
@@ -394,6 +396,7 @@ query ListDemographicsRegion @auth(
 ) {
     demographicsRegions(
         orderBy: { key: ASC }
+        limit: 100
     ) {
         key
         name
@@ -408,6 +411,7 @@ query ListDemographicsUrbanicity @auth(
 ) {
     demographicsUrbanicities(
         orderBy: { key: ASC }
+        limit: 100
     ) {
         key
         name
@@ -422,6 +426,7 @@ query ListDemographicsPolitical @auth(
 ) {
     demographicsPoliticals(
         orderBy: { key: ASC }
+        limit: 100
     ) {
         key
         name
