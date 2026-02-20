@@ -86,7 +86,7 @@ type PublicComment @table {
     id: UUID! @default(expr: "uuidV4()")
     appClient: AppClient!
     createUser: UserAccount!
-    toUserId: String
+    toUserId: String @index
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
@@ -100,7 +100,7 @@ type PrivateMessage @table {
     id: UUID! @default(expr: "uuidV4()")
     appClient: AppClient!
     createUser: UserAccount!
-    toUserId: String
+    toUserId: String @index
     toUserDisplayNameText: String
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
