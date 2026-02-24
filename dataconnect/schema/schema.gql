@@ -27,6 +27,7 @@ type UserAccount @table(key: ["id"]) {
     updateTimestamp: Timestamp
     updateDeviceIdentifierstamp: String
     updateDeviceTimestamp: String
+    userType: String
     displayNameText: String!
     displayNameTextLower: String
     photoUrl: String!

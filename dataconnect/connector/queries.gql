@@ -28,6 +28,7 @@ query GetMyUserAccount @auth(
         limit: 1
     ) {
         id
+        userType
         displayNameText
         photoUrl
     }
@@ -140,6 +141,7 @@ query GetUserAccount(
         limit: 1
     ) {
         id
+        userType
         displayNameText
         photoUrl
     }
@@ -158,6 +160,7 @@ query UserDisplayNameSearch(
         limit: $limit
     ) {
         id
+        userType
         displayNameText
         photoUrl
     }
@@ -183,6 +186,7 @@ query ListPublicComments(
         createTimestamp
         createUser {
             id
+            userType
             displayNameText
             photoUrl
         }
@@ -217,6 +221,7 @@ query GetMyPrivateMessages(
         createTimestamp
         createUser {
             id
+            userType
             displayNameText
             photoUrl
         }
