@@ -30,6 +30,7 @@ query GetMyUserAccount @auth(
         id
         displayNameText
         photoUrl
+        userType
     }
 }
 
@@ -142,6 +143,7 @@ query GetUserAccount(
         id
         displayNameText
         photoUrl
+        userType
     }
 }
 
@@ -160,6 +162,7 @@ query UserDisplayNameSearch(
         id
         displayNameText
         photoUrl
+        userType
     }
 }
 
@@ -185,6 +188,7 @@ query ListPublicComments(
             id
             displayNameText
             photoUrl
+            userType
         }
         toUserId
         toUserDisplayNameText
@@ -219,6 +223,7 @@ query GetMyPrivateMessages(
             id
             displayNameText
             photoUrl
+            userType
         }
         toUserId
         toUserDisplayNameText
