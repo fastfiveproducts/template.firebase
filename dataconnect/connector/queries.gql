@@ -2,7 +2,8 @@
 #  queries.gql
 #
 #  Created by Pete Maiser, Fast Five Products LLC.
-#      Template v0.2.x — Fast Five Products LLC's public AGPL template.
+#  Modified by Pete Maiser, Fast Five Products LLC, in February 2026.
+#      Template v0.3.x (updated) — Fast Five Products LLC's public AGPL template.
 #
 #  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 #
@@ -192,7 +193,7 @@ query ListPublicComments(
         }
         toUserId
         toUserDisplayNameText
-        title
+        subject
         content
     }
 }
@@ -227,8 +228,28 @@ query GetMyPrivateMessages(
         }
         toUserId
         toUserDisplayNameText
-        title
+        subject
         content
+    }
+}
+
+query ListPublicCommentReferences(
+    $appClientKey: String!
+    $limit: Int!
+) @auth(
+    level: USER_ANON
+    insecureReason: "public comments are meant to be visible to all authenticated users (including anonymous)"
+) {
+    publicCommentReferences(
+        where: { publicComment: { appClientKey: { eq: $appClientKey } } }
+        orderBy: [
+            { publicComment: { createTimestamp: DESC } }
+            { createTimestamp: DESC }
+        ]
+        limit: $limit
+    ) {
+        publicCommentId
+        referenceId
     }
 }
 

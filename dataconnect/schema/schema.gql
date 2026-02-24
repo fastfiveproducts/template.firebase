@@ -2,7 +2,8 @@
 #  schema.gql
 #
 #  Created by Pete Maiser, Fast Five Products LLC.
-#      Template v0.2.x — Fast Five Products LLC's public AGPL template.
+#  Modified by Pete Maiser, Fast Five Products LLC, in February 2026.
+#      Template v0.3.x (updated) — Fast Five Products LLC's public AGPL template.
 #
 #  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 #
@@ -92,7 +93,7 @@ type PublicComment @table {
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
-    title: String!
+    subject: String!
     content: String!
 }
 
@@ -106,7 +107,7 @@ type PrivateMessage @table {
     createTimestamp: Timestamp! @default(expr: "request.time")
     createDeviceIdentifierstamp: String!
     createDeviceTimestamp: String!
-    title: String!
+    subject: String!
     content: String!
 }
 
