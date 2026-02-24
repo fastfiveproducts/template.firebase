@@ -28,9 +28,9 @@ query GetMyUserAccount @auth(
         limit: 1
     ) {
         id
+        userType
         displayNameText
         photoUrl
-        userType
     }
 }
 
@@ -141,9 +141,9 @@ query GetUserAccount(
         limit: 1
     ) {
         id
+        userType
         displayNameText
         photoUrl
-        userType
     }
 }
 
@@ -160,9 +160,9 @@ query UserDisplayNameSearch(
         limit: $limit
     ) {
         id
+        userType
         displayNameText
         photoUrl
-        userType
     }
 }
 
@@ -186,9 +186,9 @@ query ListPublicComments(
         createTimestamp
         createUser {
             id
+            userType
             displayNameText
             photoUrl
-            userType
         }
         toUserId
         toUserDisplayNameText
@@ -221,9 +221,9 @@ query GetMyPrivateMessages(
         createTimestamp
         createUser {
             id
+            userType
             displayNameText
             photoUrl
-            userType
         }
         toUserId
         toUserDisplayNameText
