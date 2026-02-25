@@ -2,7 +2,8 @@
 #  mutations.gql
 #
 #  Created by Pete Maiser, Fast Five Products LLC.
-#      Template v0.2.x — Fast Five Products LLC's public AGPL template.
+#  Modified by Pete Maiser, Fast Five Products LLC, in February 2026.
+#      Template v0.3.x (updated) — Fast Five Products LLC's public AGPL template.
 #
 #  Copyright © 2025, 2026 Fast Five Products LLC. All rights reserved.
 #
@@ -201,7 +202,7 @@ mutation CreatePublicComment(
     $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
-    $title: String!
+    $subject: String!
     $content: String!
 ) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     publicComment_insert(
@@ -212,7 +213,7 @@ mutation CreatePublicComment(
             toUserDisplayNameText: $toUserDisplayNameText
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
-            title: $title
+            subject: $subject
             content: $content
         }
     )
@@ -224,7 +225,7 @@ mutation CreatePrivateMessage(
     $toUserDisplayNameText: String!
     $createDeviceIdentifierstamp: String!
     $createDeviceTimestamp: String!
-    $title: String!
+    $subject: String!
     $content: String!
 ) @auth(level: USER_EMAIL_VERIFIED) @transaction {
     privateMessage_insert(
@@ -235,7 +236,7 @@ mutation CreatePrivateMessage(
             toUserDisplayNameText: $toUserDisplayNameText
             createDeviceIdentifierstamp: $createDeviceIdentifierstamp
             createDeviceTimestamp: $createDeviceTimestamp
-            title: $title
+            subject: $subject
             content: $content
         }
     )
