@@ -27,7 +27,7 @@ mutation CreateUserDisplayName(
     # an insert will also be prevented if the user is already hogging 5 displayNames
     query
     @check( expr: "response.query.displayNamesForUser.size() < 6 && response.query.displayNamesMatchingText.size() == 0",
-            message: "That display name already exists, or you have already have too many display names.  Please choose another."
+            message: "That display name already exists, or you already have too many display names.  Please choose another."
     ) {
         displayNamesForUser: userDisplayNames(
             where: { createUserId: { eq_expr: "auth.uid" } }
