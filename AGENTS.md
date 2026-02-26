@@ -49,6 +49,8 @@ Key tables in `dataconnect/schema/schema.gql`:
 
 **Mutation data style**: Use direct column references (`genderKey: $genderKey`) instead of FK navigation (`gender: { key: $genderKey }`) when setting foreign keys in insert/upsert data blocks. Use raw types (`UUID!`, `String!`) for mutation parameters instead of `_Key` types.
 
+**Mutation parameter nullability**: Prefer non-nullable (`String!`) mutation parameters even when the underlying schema column is nullable. This enforces data quality at the API boundary while keeping the schema flexible. The schema may allow `NULL` for future use cases or backward compatibility, but mutations should require values when the app always provides them.
+
 **Upsert audit tracking**: In `_upsert` data blocks, include `updateUserId_expr: "auth.uid"` and `updateTimestamp_expr: "request.time"`. Do not use `createUserId_expr` in upsert data blocks — it gets overwritten on the update path.
 
 **Transaction create-with-association pattern**: Use `@transaction` with `_insert` for both the entity and its association. Reference the server-generated entity ID via `_expr: "response.<alias>.id"` (e.g., `topicId_expr: "response.topicInsert.id"`). Hardcode `associate: true` — you wouldn't create-and-immediately-disassociate.
