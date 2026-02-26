@@ -26,7 +26,7 @@ mutation CreateUserDisplayName(
     # Step 1: Check if display name already exists
     # an insert will also be prevented if the user is already hogging 5 displayNames
     query
-    @check( expr: "response.query.displayNamesForUser.size() < 6 && response.query.displayNamesMatchingText.size() == 0",
+    @check( expr: "response.query.displayNamesForUser.size() < 5 && response.query.displayNamesMatchingText.size() == 0",
             message: "That display name already exists, or you already have too many display names.  Please choose another."
     ) {
         displayNamesForUser: userDisplayNames(
