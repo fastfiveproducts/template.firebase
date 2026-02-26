@@ -273,6 +273,8 @@ query GetPublicCommentReferences(
     }
 }
 
+# Note: Private message references and statuses do not have an appClientKey column.
+# Tenant isolation is inherited indirectly through their parent PrivateMessage FK.
 query GetMyPrivateMessageReferences(
     $limit: Int!
 ) @auth(
@@ -324,6 +326,8 @@ query GetPrivateMessageReferences(
     }
 }
 
+# Note: Private message statuses do not have an appClientKey column.
+# Tenant isolation is inherited indirectly through their parent PrivateMessage FK.
 query GetMyPrivateMessageStatus(
     $limit: Int!
 ) @auth(
