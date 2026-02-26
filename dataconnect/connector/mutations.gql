@@ -114,7 +114,7 @@ mutation UpdateUserAccountProfile(
     $updateDeviceTimestamp: String!
     $photoUrl: String!
     # add other fields as needed
-) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+) @auth(level: USER_EMAIL_VERIFIED) {
     userAccount_update(id_expr: "auth.uid"
         data: {
             updateTimestamp_expr: "request.time"
@@ -204,7 +204,7 @@ mutation CreatePublicComment(
     $createDeviceTimestamp: String!
     $subject: String!
     $content: String!
-) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+) @auth(level: USER_EMAIL_VERIFIED) {
     publicComment_insert(
         data: {
             appClientKey: $appClientKey
@@ -227,7 +227,7 @@ mutation CreatePrivateMessage(
     $createDeviceTimestamp: String!
     $subject: String!
     $content: String!
-) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+) @auth(level: USER_EMAIL_VERIFIED) {
     privateMessage_insert(
         data: {
             appClientKey: $appClientKey
@@ -245,7 +245,7 @@ mutation CreatePrivateMessage(
 mutation CreatePublicCommentReference(
     $publicCommentId: UUID!
     $referenceId: UUID!
-) @auth(level: USER_EMAIL_VERIFIED) @transaction {
+) @auth(level: USER_EMAIL_VERIFIED) {
     publicCommentReference_insert(
         data: {
             publicCommentId: $publicCommentId
