@@ -273,18 +273,21 @@ query GetPublicCommentReferences(
     }
 }
 
+# Note: Private message references and statuses do not have an appClientKey column.
+# Tenant isolation is inherited indirectly through their parent PrivateMessage FK.
 query GetMyPrivateMessageReferences(
     $limit: Int!
 ) @auth(
     level: USER_EMAIL_VERIFIED
 ) {
-  privateMessageReferences(
-    where: {
-        privateMessage: {
-            _or: [
+    privateMessageReferences(
+        where: {
+            privateMessage: {
+                _or: [
                     { createUserId: { eq_expr: "auth.uid" } }
                     { toUserId: { eq_expr: "auth.uid" } }
-                ] }
+                ]
+            }
         }
         orderBy: [
             { privateMessage: { createTimestamp: DESC } }
@@ -303,20 +306,21 @@ query GetPrivateMessageReferences(
 ) @auth(
     level: USER_EMAIL_VERIFIED
 ) {
-  privateMessageReferences(
-    where: {
-        privateMessage: {
-            _and: [
-                { id: { eq: $messageId } }
-                {
-                    _or: [
-                        { createUserId: { eq_expr: "auth.uid" } }
-                        { toUserId: { eq_expr: "auth.uid" } }
-                    ]
-                }
-            ] }
+    privateMessageReferences(
+        where: {
+            privateMessage: {
+                _and: [
+                    { id: { eq: $messageId } }
+                    {
+                        _or: [
+                            { createUserId: { eq_expr: "auth.uid" } }
+                            { toUserId: { eq_expr: "auth.uid" } }
+                        ]
+                    }
+                ]
+            }
         }
-        orderBy: {createTimestamp: DESC}
+        orderBy: { createTimestamp: DESC }
         limit: $limit
     ) {
         privateMessageId
@@ -324,18 +328,21 @@ query GetPrivateMessageReferences(
     }
 }
 
+# Note: Private message statuses do not have an appClientKey column.
+# Tenant isolation is inherited indirectly through their parent PrivateMessage FK.
 query GetMyPrivateMessageStatus(
     $limit: Int!
 ) @auth(
     level: USER_EMAIL_VERIFIED
 ) {
-  privateMessageStatuses(
-    where: {
-        privateMessage: {
-            _or: [
+    privateMessageStatuses(
+        where: {
+            privateMessage: {
+                _or: [
                     { createUserId: { eq_expr: "auth.uid" } }
                     { toUserId: { eq_expr: "auth.uid" } }
-                ] }
+                ]
+            }
         }
         orderBy: [
             { privateMessage: { createTimestamp: DESC } }
@@ -357,22 +364,22 @@ query GetPrivateMessageStatus(
     level: USER_EMAIL_VERIFIED
     insecureReason: "users need to see status of messages they received (created by others)"
 ) {
-  privateMessageStatuses(
-    where: {
-        privateMessage: {
-            _and: [
-                { id: { eq: $messageId } }
-                {
-                    _or: [
-                        { createUserId: { eq_expr: "auth.uid" } }
-                        { toUserId: { eq_expr: "auth.uid" } }
-                    ]
-                }
-            ]
+    privateMessageStatuses(
+        where: {
+            privateMessage: {
+                _and: [
+                    { id: { eq: $messageId } }
+                    {
+                        _or: [
+                            { createUserId: { eq_expr: "auth.uid" } }
+                            { toUserId: { eq_expr: "auth.uid" } }
+                        ]
+                    }
+                ]
+            }
         }
-    }
-    orderBy: { createTimestamp: DESC }
-    limit: $limit
+        orderBy: { createTimestamp: DESC }
+        limit: $limit
     ) {
         createUserId
         createTimestamp
