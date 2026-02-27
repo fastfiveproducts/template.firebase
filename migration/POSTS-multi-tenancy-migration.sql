@@ -21,8 +21,6 @@ SET ROLE "firebaseowner_template-9960d-2-database_public";
 CREATE TABLE IF NOT EXISTS "public"."app_client" (
     "key"        text NOT NULL,
     "name"       text NOT NULL,
-    "description" text NULL,
-    "photo_url"  text NULL,
     PRIMARY KEY ("key")
 );
 
@@ -31,8 +29,8 @@ CREATE UNIQUE INDEX IF NOT EXISTS "app_client_key_uidx"
     ON "public"."app_client" ("key");
 
 -- Seed the default tenant.
-INSERT INTO "public"."app_client" ("key", "name", "description", "photo_url")
-VALUES ('template', 'Template App', 'The default template application', NULL)
+INSERT INTO "public"."app_client" ("key", "name")
+VALUES ('template', 'Template App')
 ON CONFLICT ("key") DO NOTHING;
 
 -----------------------------------------------------------------

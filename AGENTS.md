@@ -49,6 +49,8 @@ Key tables in `dataconnect/schema/schema.gql`:
 
 **Mutation data style**: Use direct column references (`genderKey: $genderKey`) instead of FK navigation (`gender: { key: $genderKey }`) when setting foreign keys in insert/upsert data blocks. Use raw types (`UUID!`, `String!`) for mutation parameters instead of `_Key` types.
 
+**Mutation parameter nullability**: Prefer non-nullable (`String!`) mutation parameters even when the underlying schema column is nullable. This enforces data quality at the API boundary while keeping the schema flexible. The schema may allow `NULL` for future use cases or backward compatibility, but mutations should require values when the app always provides them.
+
 **Upsert audit tracking**: In `_upsert` data blocks, include `updateUserId_expr: "auth.uid"` and `updateTimestamp_expr: "request.time"`. Do not use `createUserId_expr` in upsert data blocks — it gets overwritten on the update path.
 
 **Transaction create-with-association pattern**: Use `@transaction` with `_insert` for both the entity and its association. Reference the server-generated entity ID via `_expr: "response.<alias>.id"` (e.g., `topicId_expr: "response.topicInsert.id"`). Hardcode `associate: true` — you wouldn't create-and-immediately-disassociate.
@@ -67,11 +69,18 @@ When asked to "do a code review", follow this process:
 6. **Style** — Inconsistencies with the rest of the existing codebase
 7. **Licensing** — Attribution, copyright headers, commercial risks
 
+### Cross-Referencing
+Before reporting any finding, cross-reference it against:
+1. **Existing GitHub issues** (open and closed) — if a finding is already tracked by an issue, omit it
+2. **Previous code review comments** — check prior code review issues (e.g., the body and comments of issues titled "code review") for findings that were previously reported and given a disposition (fixed, deferred, won't-fix, or explained). If a GitHub issue already exists for a finding (that isn't closed) or the finding was dispositioned won't-fix in a prior review, omit it unless circumstances have materially changed.  For other dispositions, report the past disposition.
+
+Focus on genuinely new findings not already tracked or dispositioned.
+
 ### Output Format
 Present findings as a numbered table with columns: ID, Category, Priority, Summary, and File(s). Use short IDs (e.g. B1, S1, E1, D1, P1, C1, L1) by category. Prioritize bugs and security issues first.
 
 ### Workflow
-1. Explore the repo thoroughly, then present the full findings table
+1. Explore the repo thoroughly, cross-reference against existing issues and prior code review dispositions, then present the filtered findings table
 2. Discuss each finding with the user — they will decide to fix, close, or defer each one
 3. For each fix: edit → build → commit → push
 4. After each commit, regenerate the tracking table with updated statuses
