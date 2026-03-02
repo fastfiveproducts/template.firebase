@@ -1,0 +1,14 @@
+# System UserAccount — must be inserted before any content tables
+# (categories, topics, items, etc.) that reference it via createUser FK.
+mutation {
+  userAccount_insert(
+    data: {
+      id: "*system"
+      createDeviceIdentifierstamp: "system"
+      createDeviceTimestamp: "system"
+      displayNameText: "*system"
+      displayNameTextLower: "*system"
+      photoUrl: ""
+    }
+  )
+}

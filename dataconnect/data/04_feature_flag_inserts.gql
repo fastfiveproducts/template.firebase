@@ -1,0 +1,44 @@
+# Feature Flag seed data
+# Set enabled = true for features that should be active by default.
+# Generally the app defaults all flags to OFF unless the database returns them as ON.
+mutation {
+  featureFlag_insertMany(
+    data: [
+      {
+        code: "publicComments"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "privateMessages"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "activityLog"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "settings"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "userAccountProfile"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "userAssociations"
+        appClientKey: "template"
+        enabled: true
+      }
+      {
+        code: "userDemographics"
+        appClientKey: "template"
+        enabled: true
+      }
+    ]
+  )
+}

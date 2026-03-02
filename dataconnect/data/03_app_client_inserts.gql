@@ -1,0 +1,12 @@
+# AppClient seed data
+# Defines the tenant registry for multi-tenancy support.
+mutation {
+  appClient_insertMany(
+    data: [
+      {
+        key: "template"
+        name: "Template App"
+      }
+    ]
+  )
+}
